@@ -1,0 +1,74 @@
+server:
+  port: 8088
+
+---
+
+spring:
+  profiles: default
+  cloud:
+    gateway:
+      routes:
+        - id: parking
+          uri: http://localhost:8081
+          predicates:
+            - Path=/parkings/** 
+        - id: reserve
+          uri: http://localhost:8082
+          predicates:
+            - Path=/reserves/** 
+        - id: parkingLot
+          uri: http://localhost:8083
+          predicates:
+            - Path=/parkingLots/** 
+        - id: schedule
+          uri: http://localhost:8084
+          predicates:
+            - Path= /reserveTables/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+
+---
+
+spring:
+  profiles: docker
+  cloud:
+    gateway:
+      routes:
+        - id: parking
+          uri: http://parking:8080
+          predicates:
+            - Path=/parkings/** 
+        - id: reserve
+          uri: http://reserve:8080
+          predicates:
+            - Path=/reserves/** 
+        - id: parkingLot
+          uri: http://parkingLot:8080
+          predicates:
+            - Path=/parkingLots/** 
+        - id: schedule
+          uri: http://schedule:8080
+          predicates:
+            - Path= /reserveTables/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+server:
+  port: 8080
