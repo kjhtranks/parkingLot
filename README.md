@@ -27,7 +27,7 @@ https://workflowy.com/s/assessment/qJn45fBdVZn4atl3
 ### 완성된 1차 모형
 ![image](https://user-images.githubusercontent.com/78134025/109919495-158b8500-7cfc-11eb-9b89-05495d5e31ca.png)
 
-### 1차 완성본에 대한 기능적/비기능적 요구사항을 커버하는지 검증
+### 1차 완성본에 대한 기능적/비기능적 요구사항을 충족하는지 검증
 ![image](https://user-images.githubusercontent.com/78134025/109920139-37393c00-7cfd-11eb-8960-e1723acf30e7.png)
     
 1. 주차장이 등록이 된다. (7)
@@ -45,8 +45,8 @@ https://workflowy.com/s/assessment/qJn45fBdVZn4atl3
 # 구현
 도출해낸 헥사고날 아키텍처에 맞게, 로컬에서 SpringBoot를 이용해 Maven 빌드 하였다. 각각의 포트넘버는 8081 ~ 8084, 8088 이다.
 
-    cd conference
-    mvn spring-boot:run
+cd conference
+mvn spring-boot:run
     
     cd gateway
     mvn spring-boot:run
