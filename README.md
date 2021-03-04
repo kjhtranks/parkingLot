@@ -482,7 +482,7 @@ kubectl expose deploy schedule --type="ClusterIP" --port=8080
 
 kubectl get all
 ```
-- Kubectl Expose 결과 확인
+- Kubectl Expose 결과 확인  
   ![image](https://user-images.githubusercontent.com/78134025/109985556-3974b800-7d48-11eb-99a6-4ec28aa0f622.png)
 
   
