@@ -470,7 +470,7 @@ kubectl create deploy schedule --image=parkinglot.azurecr.io/schedule:latest
 kubectl get all
 ```
 - Kubectl Deploy 결과 확인  
- ![image](https://user-images.githubusercontent.com/78134025/109984984-a3d92880-7d47-11eb-8a1c-6d92d213aefd.png) 
+  ![image](https://user-images.githubusercontent.com/78134025/109984984-a3d92880-7d47-11eb-8a1c-6d92d213aefd.png) 
 
 - Kubernetes에서 서비스 생성하기 (Docker 생성이기에 Port는 8080이며, Gateway는 LoadBalancer로 생성)
 ```
@@ -483,7 +483,7 @@ kubectl expose deploy schedule --type="ClusterIP" --port=8080
 kubectl get all
 ```
 - Kubectl Expose 결과 확인
- ![image](https://user-images.githubusercontent.com/78134025/109985556-3974b800-7d48-11eb-99a6-4ec28aa0f622.png)
+  ![image](https://user-images.githubusercontent.com/78134025/109985556-3974b800-7d48-11eb-99a6-4ec28aa0f622.png)
 
   
 ## 무정지 재배포
