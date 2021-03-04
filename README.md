@@ -25,9 +25,7 @@ https://workflowy.com/s/assessment/qJn45fBdVZn4atl3
 
 ## EventStorming 결과
 ### 완성된 1차 모형
-![image](https://user-images.githubusercontent.com/78134025/109919129-81212280-7cfb-11eb-8cf5-13c41fe6283a.png)
-
-<img width="1086" alt="스크린샷 2021-02-25 오후 10 59 46" src="https://user-images.githubusercontent.com/43164924/109471758-8fc9c880-7ab4-11eb-8855-5e2e7d31328b.png">
+![image](https://user-images.githubusercontent.com/78134025/109919495-158b8500-7cfc-11eb-9b89-05495d5e31ca.png)
 
 ### 1차 완성본에 대한 기능적/비기능적 요구사항을 커버하는지 검증
 <img width="1040" alt="스크린샷 2021-03-01 오후 5 41 29" src="https://user-images.githubusercontent.com/43164924/109587219-08c72f80-7b4a-11eb-9863-8336c89c3583.png">
