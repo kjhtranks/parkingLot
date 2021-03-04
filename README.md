@@ -411,7 +411,6 @@ viewer인 schedule 서비스를 별도로 구현하여 아래와 같이 view를 
 
 # 운영
 ## CI/CD 설정
-<<<<<<< HEAD
 - git에서 소스를 가져온다.
 ```
 git clone https://github.com/kjhtranks/parkingLot.git
@@ -438,7 +437,7 @@ cd ..
 cd schedule
 mvn package
 ```
-- Dockerizing, ACR(Azure Container Registry 에 Docker Image Push) 등록
+- Dockerizing, ACR(Azure Container Registry 에 Docker Image Push) 등록을 진행한다.
 ```
 cd project/parkingLot/parkinglot
 cd gateway
@@ -460,7 +459,7 @@ cd ..
 cd schedule
 az acr build --registry parkinglot --image parkinglot.azurecr.io/schedule:latest .
 ```
-- ACR에서 이미지 가져와서 Kubernetes에서 Deploy하기
+- ACR에서 이미지 가져와서 Kubernetes에서 Deploy 한다.
 ```
 kubectl create deploy gateway --image=parkinglot.azurecr.io/gateway:latest 
 kubectl create deploy parking --image=parkinglot.azurecr.io/parking:latest
@@ -471,20 +470,20 @@ kubectl create deploy schedule --image=parkinglot.azurecr.io/schedule:latest
 kubectl get all
 ```
 - Kubectl Deploy 결과 확인  
-  <img width="556" alt="스크린샷 2021-02-28 오후 12 47 12" src="https://user-images.githubusercontent.com/33116855/109407331-52394280-79c3-11eb-8283-ba98b2899f69.png">
+ ![image](https://user-images.githubusercontent.com/78134025/109984984-a3d92880-7d47-11eb-8a1c-6d92d213aefd.png) 
 
 - Kubernetes에서 서비스 생성하기 (Docker 생성이기에 Port는 8080이며, Gateway는 LoadBalancer로 생성)
 ```
-kubectl expose deploy conference --type="ClusterIP" --port=8080
-kubectl expose deploy reserve --type="ClusterIP" --port=8080
-kubectl expose deploy room --type="ClusterIP" --port=8080
-kubectl expose deploy schedule --type="ClusterIP" --port=8080
 kubectl expose deploy gateway --type="LoadBalancer" --port=8080
+kubectl expose deploy parking --type="ClusterIP" --port=8080
+kubectl expose deploy parkinglot --type="ClusterIP" --port=8080
+kubectl expose deploy reserve --type="ClusterIP" --port=8080
+kubectl expose deploy schedule --type="ClusterIP" --port=8080
+
 kubectl get all
 ```
-- Kubectl Expose 결과 확인  
-  <img width="646" alt="스크린샷 2021-02-28 오후 12 47 50" src="https://user-images.githubusercontent.com/33116855/109407339-5feec800-79c3-11eb-9f3f-18d9d2b812f0.png">
-
+- Kubectl Expose 결과 확인
+ ![image](https://user-images.githubusercontent.com/78134025/109985556-3974b800-7d48-11eb-99a6-4ec28aa0f622.png)
 
   
 ## 무정지 재배포
