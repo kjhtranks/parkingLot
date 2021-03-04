@@ -46,7 +46,7 @@ https://workflowy.com/s/assessment/qJn45fBdVZn4atl3
 도출해낸 헥사고날 아키텍처에 맞게, 로컬에서 SpringBoot를 이용해 Maven 빌드 하였다. 각각의 포트넘버는 8081 ~ 8084, 8088 이다.
 
 cd conference
-mvn spring-boot:run
+    mvn spring-boot:run
     
     cd gateway
     mvn spring-boot:run
@@ -60,7 +60,7 @@ mvn spring-boot:run
 ## DDD의 적용
 **Room 서비스의 Reserve.java**
 
-```java
+`java
 package meetingroom;
 
 import javax.persistence.*;
@@ -68,7 +68,7 @@ import org.springframework.beans.BeanUtils;
 import java.util.List;
 
 @Entity
-@Table(name="Room_table")
+@Table(name="Room_table")`
 public class Room {
 
     @Id
