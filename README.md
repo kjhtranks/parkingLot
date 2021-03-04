@@ -44,11 +44,14 @@ https://workflowy.com/s/assessment/qJn45fBdVZn4atl3
 
 # 구현
 도출해낸 헥사고날 아키텍처에 맞게, 로컬에서 SpringBoot를 이용해 Maven 빌드 하였다. 각각의 포트넘버는 8081 ~ 8084, 8088 이다.
-
-cd conference
-    mvn spring-boot:run
     
     cd gateway
+    mvn spring-boot:run
+
+    cd parking
+    mvn spring-boot:run
+    
+    cd parkingLot
     mvn spring-boot:run
     
     cd reserve
@@ -58,18 +61,18 @@ cd conference
     mvn spring-boot:run
   
 ## DDD의 적용
-**Room 서비스의 Reserve.java**
+**ParkingLot 서비스의 ParkingLot.java**
 
-`java
-package meetingroom;
+```java
+package parkinglot;
 
 import javax.persistence.*;
 import org.springframework.beans.BeanUtils;
 import java.util.List;
 
 @Entity
-@Table(name="Room_table")`
-public class Room {
+@Table(name="ParkingLot_table")
+public class ParkingLot {
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -83,32 +86,36 @@ public class Room {
         BeanUtils.copyProperties(this, added);
         added.publishAfterCommit();
     }
+
     public Long getId() {
         return id;
     }
+
     public void setId(Long id) {
         this.id = id;
     }
     public String getStatus() {
         return status;
     }
+
     public void setStatus(String status) {
         this.status = status;
     }
     public Integer getFloor() {
         return floor;
     }
+
     public void setFloor(Integer floor) {
         this.floor = floor;
     }
 }
 ```
 
-**Room 서비스의 PolicyHandler.java**
+**ParkingLot 서비스의 PolicyHandler.java**
 ```java
-package meetingroom;
+package parkinglot;
 
-import meetingroom.config.kafka.KafkaProcessor;
+import parkinglot.config.kafka.KafkaProcessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,7 +128,7 @@ import java.util.Optional;
 @Service
 public class PolicyHandler{
     @Autowired
-    RoomRepository roomRepository;
+    ParkingLotRepository parkingLotRepository;
 
     @StreamListener(KafkaProcessor.INPUT)
     public void onStringEventListener(@Payload String eventString){
@@ -129,66 +136,72 @@ public class PolicyHandler{
     }
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverCanceled_(@Payload Canceled canceled){
+    public void wheneverCanceled_UpdateReserve(@Payload Canceled canceled){
 
         if(canceled.isMe()){
-            Optional<Room> room = roomRepository.findById(canceled.getRoomId());
             System.out.println("##### listener  : " + canceled.toJson());
-            if (room.isPresent()){
-                room.get().setStatus("Available");//회의실 예약이 취소되어 예약이 가능해짐.
-                roomRepository.save(room.get());
+            
+            Optional<ParkingLot> parkingLot = parkingLotRepository.findById(canceled.getParkingLotId());
+            if (parkingLot.isPresent()){
+                parkingLot.get().setStatus("Available");    // 주차장 예약이 취소되어 예약이 가능해짐.
+                parkingLotRepository.save(parkingLot.get());
             }
         }
     }
+
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverReserved_(@Payload Reserved reserved){
+    public void wheneverReserved_UpdateReserve(@Payload Reserved reserved){
 
         if(reserved.isMe()){
-            Optional<Room> room = roomRepository.findById(reserved.getRoomId());
             System.out.println("##### listener  : " + reserved.toJson());
-            if (room.isPresent()){
-                room.get().setStatus("Reserved");//회의실이 예약됨.
-                roomRepository.save(room.get());
+
+            Optional<ParkingLot> parkingLot = parkingLotRepository.findById(reserved.getParkingLotId());
+            if (parkingLot.isPresent()){
+                parkingLot.get().setStatus("Reserved");    // 주차장 예약됨.
+                parkingLotRepository.save(parkingLot.get());
             }
         }
     }
+    
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverUserChecked_(@Payload UserChecked userChecked){
+    public void wheneverUserChecked_UpdateReserve(@Payload UserChecked userChecked){
 
         if(userChecked.isMe()){
-            Optional<Room> room = roomRepository.findById(userChecked.getRoomId());
             System.out.println("##### listener  : " + userChecked.toJson());
-            if(room.isPresent()){
-                room.get().setStatus("Started");//회의가 시작됨.
-                roomRepository.save(room.get());
-            }
+
+            Optional<ParkingLot> parkingLot = parkingLotRepository.findById(userChecked.getParkingLotId());
+            if (parkingLot.isPresent()){
+                parkingLot.get().setStatus("Available");    // 주차 시작됨.
+                parkingLotRepository.save(parkingLot.get());
+            }            
         }
     }
+
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverEnded_(@Payload Ended ended){
+    public void wheneverEnded_UpdateReserve(@Payload Ended ended){
 
         if(ended.isMe()){
-            Optional<Room> room = roomRepository.findById(ended.getRoomId());
             System.out.println("##### listener  : " + ended.toJson());
-            if(room.isPresent()){
-                room.get().setStatus("Available");//회의가 종료됨.
-                roomRepository.save(room.get());
-            }
+            
+            Optional<ParkingLot> parkingLot = parkingLotRepository.findById(ended.getParkingLotId());
+            if (parkingLot.isPresent()){
+                parkingLot.get().setStatus("Available");    // 주차 종료됨.
+                parkingLotRepository.save(parkingLot.get());
+            }            
         }
-    }
-
+    }    
 }
 
 ```
 
 
-- 적용 후 REST API의 테스트를 통해 정상적으로 작동함을 알 수 있었다.
-- 회의실 등록(Added) 후 결과
+- 적용 후 REST API의 테스트를 통해 정상적으로 작동함을 확인하였다.
+- 주차장 등록(Added) 후 결과
 
 <img width="1116" alt="스크린샷 2021-03-01 오후 6 38 24" src="https://user-images.githubusercontent.com/43164924/109479041-5184d700-7abd-11eb-84d6-782c4b94779e.png">
 
 
-- 회의 예약(Reserved) 후 결과
+- 주차장 예약(Reserved) 후 결과
 
 <img width="1116" alt="스크린샷 2021-03-01 오후 6 37 36" src="https://user-images.githubusercontent.com/43164924/109478970-3ade8000-7abd-11eb-836a-e07a7b3dec80.png">
 
@@ -205,18 +218,18 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: conference
+        - id: parking
           uri: http://localhost:8081
           predicates:
-            - Path=/conferences/** 
+            - Path=/parkings/** 
         - id: reserve
           uri: http://localhost:8082
           predicates:
             - Path=/reserves/** 
-        - id: room
+        - id: parkingLot
           uri: http://localhost:8083
           predicates:
-            - Path=/rooms/** 
+            - Path=/parkingLots/** 
         - id: schedule
           uri: http://localhost:8084
           predicates:
@@ -240,18 +253,18 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: conference
-          uri: http://conference:8080
+        - id: parking
+          uri: http://parking:8080
           predicates:
-            - Path=/conferences/** 
+            - Path=/parkings/** 
         - id: reserve
           uri: http://reserve:8080
           predicates:
             - Path=/reserves/** 
-        - id: room
-          uri: http://room:8080
+        - id: parkingLot
+          uri: http://parkingLot:8080
           predicates:
-            - Path=/rooms/** 
+            - Path=/parkingLots/** 
         - id: schedule
           uri: http://schedule:8080
           predicates:
@@ -273,14 +286,14 @@ server:
 ```
 
 ## Polyglot Persistence
-- Conference 서비스의 경우, 다른 서비스들이 h2 저장소를 이용한 것과는 다르게 hsql을 이용하였다. 
-- 이 작업을 통해 서비스들이 각각 다른 데이터베이스를 사용하더라도 전체적인 기능엔 문제가 없음을, 즉 Polyglot Persistence를 충족하였다.
+- parking 서비스의 경우, 다른 서비스들이 h2 저장소를 이용한 것과는 다르게 hsql을 이용하였다. 
+- 이 작업을 통해 서비스들이 각각 다른 데이터베이스를 사용하더라도 전체적인 기능엔 문제가 없음(Polyglot Persistence)를 확인하였다.
 
-<img width="446" alt="스크린샷 2021-03-01 오후 6 43 02" src="https://user-images.githubusercontent.com/43164924/109479663-f6071900-7abd-11eb-8c22-eda690cadea4.png">
+![image](https://user-images.githubusercontent.com/78134025/109927929-3c4fb880-7d08-11eb-89ee-acc013e1aae1.png)
 
 ## 동기식 호출(Req/Res 방식)과 Fallback 처리
 
-- conference 서비스의 external/ReserveService.java 내에 예약한 사용자가 맞는지 확인하는 Service 대행 인터페이스(Proxy)를 FeignClient를 이용하여 구현하였다.
+- parking 서비스의 external/ReserveService.java 내에 예약한 사용자가 맞는지 확인하는 Service 대행 인터페이스(Proxy)를 FeignClient를 이용하여 구현하였다.
 
 ```java
 @FeignClient(name="reserve", url="${api.reserve.url}")
@@ -291,7 +304,7 @@ public interface ReserveService {
 
 }
 ```
-- conference 서비스의 Conference.java 내에 사용자 확인 후 결과에 따라 회의 시작을 진행할지, 진행하지 않을지 결정.(@PrePersist)
+- parking 서비스의 Parking.java 내에 사용자 확인 후 결과에 따라 주차시작(차량 진입 시)을 진행할지, 진행하지 않을지 결정.(@PrePersist)
 ```java
 @PrePersist
     public void onPrePersist(){
@@ -352,32 +365,33 @@ public class Reserve {
 }
 ```
 
-- room 서비스 내 PolicyHandler.java 에서 아래와 같이 Sub 구현
+- parkingLot 서비스 내 PolicyHandler.java 에서 아래와 같이 Sub 구현
 
 ```java
 @Service
 public class PolicyHandler{
     @Autowired
-    RoomRepository roomRepository;
+    ParkingLotRepository parkingLotRepository;
 
     //...
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverReserved_(@Payload Reserved reserved){
+    public void wheneverReserved_UpdateReserve(@Payload Reserved reserved){
 
         if(reserved.isMe()){
-            Optional<Room> room = roomRepository.findById(reserved.getRoomId());
             System.out.println("##### listener  : " + reserved.toJson());
-            if (room.isPresent()){
-                room.get().setStatus("Reserved");//회의실이 예약됨.
-                roomRepository.save(room.get());
+
+            Optional<ParkingLot> parkingLot = parkingLotRepository.findById(reserved.getParkingLotId());
+            if (parkingLot.isPresent()){
+                parkingLot.get().setStatus("Reserved");    // 주차장 예약됨.
+                parkingLotRepository.save(parkingLot.get());
             }
         }
     }
   }
 ```
 - 비동기 호출은 다른 서비스 하나가 비정상이어도 해당 메세지를 다른 메시지 큐에서 보관하고 있기에, 서비스가 다시 정상으로 돌아오게 되면 그 메시지를 처리하게 된다.
-  - reserve 서비스와 room 서비스가 둘 다 정상 작동을 하고 있을 경우, 이상이 없이 잘 된다. <img width="1116" alt="스크린샷 2021-03-01 오후 8 01 56" src="https://user-images.githubusercontent.com/43164924/109488499-fc4ec280-7ac8-11eb-9a52-77d6e4939417.png">
-  - room 서비스를 내렸다. <img width="298" alt="스크린샷 2021-03-01 오후 8 02 28" src="https://user-images.githubusercontent.com/43164924/109488553-0ffa2900-7ac9-11eb-8d08-1e7d7ea7aff3.png">
+  - reserve 서비스와 parkingLot 서비스가 둘 다 정상 작동을 하고 있을 경우, 이상이 없이 잘 된다. <img width="1116" alt="스크린샷 2021-03-01 오후 8 01 56" src="https://user-images.githubusercontent.com/43164924/109488499-fc4ec280-7ac8-11eb-9a52-77d6e4939417.png">
+  - parkingLot 서비스를 내렸다. <img width="298" alt="스크린샷 2021-03-01 오후 8 02 28" src="https://user-images.githubusercontent.com/43164924/109488553-0ffa2900-7ac9-11eb-8d08-1e7d7ea7aff3.png">
   - reserve 서비스를 이용해 예약을 하여도 문제가 없이 동작한다. <img width="906" alt="스크린샷 2021-03-01 오후 8 03 47" src="https://user-images.githubusercontent.com/43164924/109488704-3e780400-7ac9-11eb-80ee-ad1714bf8991.png">
 
 ## CQRS
@@ -386,7 +400,7 @@ viewer인 schedule 서비스를 별도로 구현하여 아래와 같이 view를 
 - Reserved 수행 후 schedule (예약 진행)
 <img width="906" alt="스크린샷 2021-03-01 오후 8 07 43" src="https://user-images.githubusercontent.com/43164924/109489147-ccec8580-7ac9-11eb-86f4-24d7b6db92ac.png">
 
-- Ended 수행 후 schedule (회의 시작 후, 회의 종료)
+- Ended 수행 후 schedule (주차 시작 후, 주차 종료)
 <img width="906" alt="스크린샷 2021-03-01 오후 8 08 49" src="https://user-images.githubusercontent.com/43164924/109489279-f2798f00-7ac9-11eb-8ee3-55ca97c0b27b.png">
 
 - 다시 Reserved 수행 후 schedule (예약 진행)
