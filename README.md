@@ -333,10 +333,10 @@ public interface ReserveService {
         }
     }
 ```
-- 동기식 호출에서는 호출 시간에 따른 커플링이 발생하여, Reserve 시스템에 장애가 나면 회의 시작을 할 수가 없다. (Reserve 시스템에서 예약한 사용자인지를 확인하므로)
-  - Reserve 서비스를 중지. <img width="316" alt="스크린샷 2021-03-01 오후 7 39 17" src="https://user-images.githubusercontent.com/43164924/109486134-d247d100-7ac5-11eb-897a-54091bb13381.png">
-  - conference 서비스에서 회의 시작 시 에러 발생. <img width="1116" alt="스크린샷 2021-03-01 오후 7 41 00" src="https://user-images.githubusercontent.com/43164924/109486323-0fac5e80-7ac6-11eb-99e2-0ee7cc1f86e8.png">
-  - reserve 서비스 재기동 후 다시 회의 시작 요청. <img width="1116" alt="스크린샷 2021-03-01 오후 7 44 31" src="https://user-images.githubusercontent.com/43164924/109486682-8d706a00-7ac6-11eb-81c8-980c0a612005.png">
+- 동기식 호출에서는 호출 시간에 따른 커플링이 발생하여, Reserve 시스템에 장애가 나면 주차 시작을 할 수가 없다. (Reserve 시스템에서 예약한 사용자인지를 확인하므로)
+  - reserve 서비스를 중지. <img width="316" alt="스크린샷 2021-03-01 오후 7 39 17" src="https://user-images.githubusercontent.com/43164924/109486134-d247d100-7ac5-11eb-897a-54091bb13381.png">
+  - parking 서비스에서 주차 시작 시 에러 발생. <img width="1116" alt="스크린샷 2021-03-01 오후 7 41 00" src="https://user-images.githubusercontent.com/43164924/109486323-0fac5e80-7ac6-11eb-99e2-0ee7cc1f86e8.png">
+  - reserve 서비스 재기동 후 다시 주차 시작 요청. <img width="1116" alt="스크린샷 2021-03-01 오후 7 44 31" src="https://user-images.githubusercontent.com/43164924/109486682-8d706a00-7ac6-11eb-81c8-980c0a612005.png">
 
 ## 비동기식 호출 (Pub/Sub 방식)
 
