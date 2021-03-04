@@ -411,6 +411,7 @@ viewer인 schedule 서비스를 별도로 구현하여 아래와 같이 view를 
 
 # 운영
 ## CI/CD 설정
+<<<<<<< HEAD
 - git에서 소스 가져오기
 ```
 https://github.com/dngur6344/meetingroom
@@ -420,23 +421,45 @@ https://github.com/dngur6344/meetingroom
 cd /meetingroom
 cd conference
 mvn package
+=======
+- git에서 소스를 가져온다.
+```
+git clone https://github.com/kjhtranks/parkingLot.git
+```
+- Dependency 를 적용한다.
+```
+cd project/parkingLot/parkinglot
+>>>>>>> 4a037c01f65068d01c6b1cd6596f6f4a81d28af6
 
 cd ..
 cd gateway
 mvn package
 
+<<<<<<< HEAD
 cd ..
 cd reserve
 mvn package
 
 cd ..
 cd room
+=======
+cd parking
+mvn package
+
+cd ..
+cd parkingLot
+mvn package
+
+cd ..
+cd reserve
+>>>>>>> 4a037c01f65068d01c6b1cd6596f6f4a81d28af6
 mvn package
 
 cd ..
 cd schedule
 mvn package
 ```
+<<<<<<< HEAD
 - Dockerlizing, ACR(Azure Container Registry에 Docker Image Push하기
 ```
 cd /meetingroom
@@ -466,6 +489,39 @@ kubectl create deploy conference --image=meetingroomacr.azurecr.io/conference:la
 kubectl create deploy reserve --image=meetingroomacr.azurecr.io/reserve:latest
 kubectl create deploy room --image=meetingroomacr.azurecr.io/room:latest
 kubectl create deploy schedule --image=meetingroomacr.azurecr.io/schedule:latest
+=======
+
+- Dockerizing, ACR(Azure Container Registry 에 Docker Image Push) 등록
+```
+cd project/parkingLot/parkinglot
+cd gateway
+az acr build --registry parkinglot --image parkinglot.azurecr.io/gateway:latest .
+
+cd ..
+cd parking
+az acr build --registry parkinglot --image parkinglot.azurecr.io/parking:latest .
+
+cd ..
+cd parkinglot
+az acr build --registry parkinglot --image parkinglot.azurecr.io/parkinglot:latest .
+
+cd ..
+cd reserve
+az acr build --registry parkinglot --image parkinglot.azurecr.io/reserve:latest .
+
+cd ..
+cd schedule
+az acr build --registry parkinglot --image parkinglot.azurecr.io/schedule:latest .
+```
+- ACR에서 이미지 가져와서 Kubernetes에서 Deploy하기
+```
+kubectl create deploy gateway --image=parkinglot.azurecr.io/gateway:latest 
+kubectl create deploy parking --image=parkinglot.azurecr.io/parking:latest
+kubectl create deploy parkinglot --image=parkinglot.azurecr.io/parkinglot:latest
+kubectl create deploy reserve --image=parkinglot.azurecr.io/reserve:latest
+kubectl create deploy schedule --image=parkinglot.azurecr.io/schedule:latest
+
+>>>>>>> 4a037c01f65068d01c6b1cd6596f6f4a81d28af6
 kubectl get all
 ```
 - Kubectl Deploy 결과 확인  
