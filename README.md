@@ -196,14 +196,15 @@ public class PolicyHandler{
 
 
 - 적용 후 REST API의 테스트를 통해 정상적으로 작동함을 확인하였다.
-- 주차장 등록(Added) 후 결과
+- 주차장 등록(Added) 후 결과  
 
-<img width="1116" alt="스크린샷 2021-03-01 오후 6 38 24" src="https://user-images.githubusercontent.com/43164924/109479041-5184d700-7abd-11eb-84d6-782c4b94779e.png">
+![image](https://user-images.githubusercontent.com/78134025/109990410-b4d86880-7d4c-11eb-980c-d4dbdaf894a0.png)
 
 
 - 주차장 예약(Reserved) 후 결과
 
-<img width="1116" alt="스크린샷 2021-03-01 오후 6 37 36" src="https://user-images.githubusercontent.com/43164924/109478970-3ade8000-7abd-11eb-836a-e07a7b3dec80.png">
+![image](https://user-images.githubusercontent.com/78134025/109995392-96c13700-7d51-11eb-9c88-3179c2133b66.png)
+
 
 ## Gateway 적용
 API Gateway를 통해 마이크로 서비스들의 진입점을 하나로 진행하였다.
@@ -334,9 +335,10 @@ public interface ReserveService {
     }
 ```
 - 동기식 호출에서는 호출 시간에 따른 커플링이 발생하여, Reserve 시스템에 장애가 나면 주차 시작을 할 수가 없다. (Reserve 시스템에서 예약한 사용자인지를 확인하므로)
-  - reserve 서비스를 중지. <img width="316" alt="스크린샷 2021-03-01 오후 7 39 17" src="https://user-images.githubusercontent.com/43164924/109486134-d247d100-7ac5-11eb-897a-54091bb13381.png">
-  - parking 서비스에서 주차 시작 시 에러 발생. <img width="1116" alt="스크린샷 2021-03-01 오후 7 41 00" src="https://user-images.githubusercontent.com/43164924/109486323-0fac5e80-7ac6-11eb-99e2-0ee7cc1f86e8.png">
-  - reserve 서비스 재기동 후 다시 주차 시작 요청. <img width="1116" alt="스크린샷 2021-03-01 오후 7 44 31" src="https://user-images.githubusercontent.com/43164924/109486682-8d706a00-7ac6-11eb-81c8-980c0a612005.png">
+  - reserve 서비스를 중지 후, parking 서비스에서 주차 시작 시 에러 발생  
+    ![image](https://user-images.githubusercontent.com/78134025/109996812-ed7b4080-7d52-11eb-9ca9-a5bb13b0464d.png)
+
+  - reserve 서비스 재기동 후 다시 주차 시작 요청  <img width="1116" alt="스크린샷 2021-03-01 오후 7 44 31" src="https://user-images.githubusercontent.com/43164924/109486682-8d706a00-7ac6-11eb-81c8-980c0a612005.png">
 
 ## 비동기식 호출 (Pub/Sub 방식)
 
