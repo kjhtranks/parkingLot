@@ -196,14 +196,15 @@ public class PolicyHandler{
 
 
 - 적용 후 REST API의 테스트를 통해 정상적으로 작동함을 확인하였다.
-- 주차장 등록(Added) 후 결과
+- 주차장 등록(Added) 후 결과  
 
-<img width="1116" alt="스크린샷 2021-03-01 오후 6 38 24" src="https://user-images.githubusercontent.com/43164924/109479041-5184d700-7abd-11eb-84d6-782c4b94779e.png">
+![image](https://user-images.githubusercontent.com/78134025/109990410-b4d86880-7d4c-11eb-980c-d4dbdaf894a0.png)
 
 
 - 주차장 예약(Reserved) 후 결과
 
-<img width="1116" alt="스크린샷 2021-03-01 오후 6 37 36" src="https://user-images.githubusercontent.com/43164924/109478970-3ade8000-7abd-11eb-836a-e07a7b3dec80.png">
+![image](https://user-images.githubusercontent.com/78134025/109995392-96c13700-7d51-11eb-9c88-3179c2133b66.png)
+
 
 ## Gateway 적용
 API Gateway를 통해 마이크로 서비스들의 진입점을 하나로 진행하였다.
@@ -334,9 +335,10 @@ public interface ReserveService {
     }
 ```
 - 동기식 호출에서는 호출 시간에 따른 커플링이 발생하여, Reserve 시스템에 장애가 나면 주차 시작을 할 수가 없다. (Reserve 시스템에서 예약한 사용자인지를 확인하므로)
-  - reserve 서비스를 중지. <img width="316" alt="스크린샷 2021-03-01 오후 7 39 17" src="https://user-images.githubusercontent.com/43164924/109486134-d247d100-7ac5-11eb-897a-54091bb13381.png">
-  - parking 서비스에서 주차 시작 시 에러 발생. <img width="1116" alt="스크린샷 2021-03-01 오후 7 41 00" src="https://user-images.githubusercontent.com/43164924/109486323-0fac5e80-7ac6-11eb-99e2-0ee7cc1f86e8.png">
-  - reserve 서비스 재기동 후 다시 주차 시작 요청. <img width="1116" alt="스크린샷 2021-03-01 오후 7 44 31" src="https://user-images.githubusercontent.com/43164924/109486682-8d706a00-7ac6-11eb-81c8-980c0a612005.png">
+  - reserve 서비스를 중지 후, parking 서비스에서 주차 시작 시 에러 발생  
+    ![image](https://user-images.githubusercontent.com/78134025/109996812-ed7b4080-7d52-11eb-9ca9-a5bb13b0464d.png)
+
+  - reserve 서비스 재기동 후 다시 주차 시작 요청  <img width="1116" alt="스크린샷 2021-03-01 오후 7 44 31" src="https://user-images.githubusercontent.com/43164924/109486682-8d706a00-7ac6-11eb-81c8-980c0a612005.png">
 
 ## 비동기식 호출 (Pub/Sub 방식)
 
@@ -411,17 +413,6 @@ viewer인 schedule 서비스를 별도로 구현하여 아래와 같이 view를 
 
 # 운영
 ## CI/CD 설정
-<<<<<<< HEAD
-- git에서 소스 가져오기
-```
-https://github.com/dngur6344/meetingroom
-```
-- Build 하기
-```
-cd /meetingroom
-cd conference
-mvn package
-=======
 - git에서 소스를 가져온다.
 ```
 git clone https://github.com/kjhtranks/parkingLot.git
@@ -429,20 +420,10 @@ git clone https://github.com/kjhtranks/parkingLot.git
 - Dependency 를 적용한다.
 ```
 cd project/parkingLot/parkinglot
->>>>>>> 4a037c01f65068d01c6b1cd6596f6f4a81d28af6
-
-cd ..
 cd gateway
 mvn package
 
-<<<<<<< HEAD
 cd ..
-cd reserve
-mvn package
-
-cd ..
-cd room
-=======
 cd parking
 mvn package
 
@@ -452,46 +433,13 @@ mvn package
 
 cd ..
 cd reserve
->>>>>>> 4a037c01f65068d01c6b1cd6596f6f4a81d28af6
 mvn package
 
 cd ..
 cd schedule
 mvn package
 ```
-<<<<<<< HEAD
-- Dockerlizing, ACR(Azure Container Registry에 Docker Image Push하기
-```
-cd /meetingroom
-cd rental
-az acr build --registry meetingroomacr --image meetingroomacr.azurecr.io/conference:latest .
-
-cd ..
-cd gateway
-az acr build --registry meetingroomacr --image meetingroomacr.azurecr.io/gateway:latest .
-
-cd ..
-cd reserve
-az acr build --registry meetingroomacr --image meetingroomacr.azurecr.io/reserve:latest .
-
-cd ..
-cd room
-az acr build --registry meetingroomacr --image meetingroomacr.azurecr.io/room:latest .
-
-cd ..
-cd schedule
-az acr build --registry meetingroomacr --image meetingroomacr.azurecr.io/schedule:latest .
-```
-- ACR에서 이미지 가져와서 Kubernetes에서 Deploy하기
-```
-kubectl create deploy gateway --image=meetingroomacr.azurecr.io/gateway:latest
-kubectl create deploy conference --image=meetingroomacr.azurecr.io/conference:latest
-kubectl create deploy reserve --image=meetingroomacr.azurecr.io/reserve:latest
-kubectl create deploy room --image=meetingroomacr.azurecr.io/room:latest
-kubectl create deploy schedule --image=meetingroomacr.azurecr.io/schedule:latest
-=======
-
-- Dockerizing, ACR(Azure Container Registry 에 Docker Image Push) 등록
+- Dockerizing, ACR(Azure Container Registry 에 Docker Image Push) 등록을 진행한다.
 ```
 cd project/parkingLot/parkinglot
 cd gateway
@@ -513,7 +461,7 @@ cd ..
 cd schedule
 az acr build --registry parkinglot --image parkinglot.azurecr.io/schedule:latest .
 ```
-- ACR에서 이미지 가져와서 Kubernetes에서 Deploy하기
+- ACR에서 이미지 가져와서 Kubernetes에서 Deploy 한다.
 ```
 kubectl create deploy gateway --image=parkinglot.azurecr.io/gateway:latest 
 kubectl create deploy parking --image=parkinglot.azurecr.io/parking:latest
@@ -521,24 +469,25 @@ kubectl create deploy parkinglot --image=parkinglot.azurecr.io/parkinglot:latest
 kubectl create deploy reserve --image=parkinglot.azurecr.io/reserve:latest
 kubectl create deploy schedule --image=parkinglot.azurecr.io/schedule:latest
 
->>>>>>> 4a037c01f65068d01c6b1cd6596f6f4a81d28af6
 kubectl get all
 ```
 - Kubectl Deploy 결과 확인  
-  <img width="556" alt="스크린샷 2021-02-28 오후 12 47 12" src="https://user-images.githubusercontent.com/33116855/109407331-52394280-79c3-11eb-8283-ba98b2899f69.png">
+
+  ![image](https://user-images.githubusercontent.com/78134025/109984984-a3d92880-7d47-11eb-8a1c-6d92d213aefd.png) 
 
 - Kubernetes에서 서비스 생성하기 (Docker 생성이기에 Port는 8080이며, Gateway는 LoadBalancer로 생성)
 ```
-kubectl expose deploy conference --type="ClusterIP" --port=8080
-kubectl expose deploy reserve --type="ClusterIP" --port=8080
-kubectl expose deploy room --type="ClusterIP" --port=8080
-kubectl expose deploy schedule --type="ClusterIP" --port=8080
 kubectl expose deploy gateway --type="LoadBalancer" --port=8080
+kubectl expose deploy parking --type="ClusterIP" --port=8080
+kubectl expose deploy parkinglot --type="ClusterIP" --port=8080
+kubectl expose deploy reserve --type="ClusterIP" --port=8080
+kubectl expose deploy schedule --type="ClusterIP" --port=8080
+
 kubectl get all
 ```
 - Kubectl Expose 결과 확인  
-  <img width="646" alt="스크린샷 2021-02-28 오후 12 47 50" src="https://user-images.githubusercontent.com/33116855/109407339-5feec800-79c3-11eb-9f3f-18d9d2b812f0.png">
 
+  ![image](https://user-images.githubusercontent.com/78134025/109985556-3974b800-7d48-11eb-99a6-4ec28aa0f622.png)
 
   
 ## 무정지 재배포
