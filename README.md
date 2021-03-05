@@ -398,17 +398,9 @@ public class PolicyHandler{
 ## CQRS
 
 viewer인 schedule 서비스를 별도로 구현하여 아래와 같이 view를 출력한다.
-- Reserved 수행 후 schedule (예약 진행)
-<img width="906" alt="스크린샷 2021-03-01 오후 8 07 43" src="https://user-images.githubusercontent.com/43164924/109489147-ccec8580-7ac9-11eb-86f4-24d7b6db92ac.png">
+- Reserved 수행 후 schedule (예약 진행)  
+  ![image](https://user-images.githubusercontent.com/78134025/110062927-876fd700-7dad-11eb-9b4e-96503d8144ab.png)
 
-- Ended 수행 후 schedule (주차 시작 후, 주차 종료)
-<img width="906" alt="스크린샷 2021-03-01 오후 8 08 49" src="https://user-images.githubusercontent.com/43164924/109489279-f2798f00-7ac9-11eb-8ee3-55ca97c0b27b.png">
-
-- 다시 Reserved 수행 후 schedule (예약 진행)
-<img width="906" alt="스크린샷 2021-03-01 오후 8 09 26" src="https://user-images.githubusercontent.com/43164924/109489335-09b87c80-7aca-11eb-8db2-b56a049521c9.png">
-
-- Canceled 수행 후 schedule (예약 취소)
-<img width="906" alt="스크린샷 2021-03-01 오후 8 10 53" src="https://user-images.githubusercontent.com/43164924/109489448-3c627500-7aca-11eb-8f63-894d2d78ece4.png">
 
 # 운영
 ## CI/CD 설정
