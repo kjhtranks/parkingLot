@@ -485,35 +485,35 @@ kubectl get all
 - 먼저 무정지 재배포가 100% 되는 것인지 확인하기 위해서 Autoscaler 이나 CB 설정을 제거함
 - siege 로 배포작업 직전에 워크로드를 모니터링 함
 ```
-siege -c10 -t60S -r10 -v --content-type "application/json" 'http://52.231.13.109:8080/reserves POST {"userId":1, "roomId":"3"}'
+siege -c10 -t60S -r10 -v --content-type "application/json" 'http://52.231.184.252:8080/reserves POST {"userId":1", "parkingLotId":"3"}'
 ```
 - Readiness가 설정되지 않은 yml 파일로 배포 진행  
-  <img width="871" alt="스크린샷 2021-02-28 오후 1 52 52" src="https://user-images.githubusercontent.com/33116855/109408363-4b62fd80-79cc-11eb-9014-638a09b545c1.png">
+  ![image](https://user-images.githubusercontent.com/78134025/110064117-d61e7080-7daf-11eb-81bd-0cf8fa57b331.png)
 
 ```
 kubectl apply -f deployment.yml
 ```
-- 아래 그림과 같이, Kubernetes가 준비가 되지 않은 delivery pod에 요청을 보내서 siege의 Availability 가 100% 미만으로 떨어짐 
-  <img width="480" alt="스크린샷 2021-02-28 오후 2 30 37" src="https://user-images.githubusercontent.com/33116855/109408933-97fd0780-79d1-11eb-8ec6-f17d44161eb5.png">
+- 아래 그림과 같이, Kubernetes가 Readiness 준비가 되지 않은 reserve pod에 요청을 보내서 siege의 Availability 가 100% 미만으로 떨어짐  
+  ![image](https://user-images.githubusercontent.com/78134025/110064850-45e12b00-7db1-11eb-9041-5294903b2ae8.png)
 
 - Readiness가 설정된 yml 파일로 배포 진행  
-  <img width="779" alt="스크린샷 2021-02-28 오후 2 32 51" src="https://user-images.githubusercontent.com/33116855/109408971-e4484780-79d1-11eb-8989-cd680e962eff.png">
+  ![image](https://user-images.githubusercontent.com/78134025/110067534-48468380-7db7-11eb-87bc-b1e479ed53c1.png)
 
 ```
 kubectl apply -f deployment.yml
 ```
 - 배포 중 pod가 2개가 뜨고, 새롭게 띄운 pod가 준비될 때까지, 기존 pod가 유지됨을 확인  
-  <img width="764" alt="스크린샷 2021-02-28 오후 2 34 54" src="https://user-images.githubusercontent.com/33116855/109408992-2b363d00-79d2-11eb-8024-07aeade9e928.png">
+  ![image](https://user-images.githubusercontent.com/78134025/110067625-76c45e80-7db7-11eb-91b3-364954de5c7a.png)
   
 - siege 가 중단되지 않고, Availability가 높아졌음을 확인하여 무정지 재배포가 됨을 확인함  
-  <img width="507" alt="스크린샷 2021-02-28 오후 2 48 28" src="https://user-images.githubusercontent.com/33116855/109409209-093dba00-79d4-11eb-9793-d1a7cdbe55f0.png">
+  ![image](https://user-images.githubusercontent.com/78134025/110068103-53e67a00-7db8-11eb-84cf-dbb6a749d3ca.png)
 
 
 ## 오토스케일 아웃
 - 서킷 브레이커는 시스템을 안정되게 운영할 수 있게 해줬지만, 사용자의 요청이 급증하는 경우, 오토스케일 아웃이 필요하다.
 
-  - 단, 부하가 제대로 걸리기 위해서, reserve 서비스의 리소스를 줄여서 재배포한다.
-    <img width="703" alt="스크린샷 2021-02-28 오후 2 51 19" src="https://user-images.githubusercontent.com/33116855/109409248-7d785d80-79d4-11eb-95ce-4af79b9a7e72.png">
+  - 단, 부하가 제대로 걸리기 위해서, reserve 서비스의 리소스를 줄여서 재배포한다.  
+    ![image](https://user-images.githubusercontent.com/78134025/110068733-a5433900-7db9-11eb-834f-460f43944b17.png)
 
 - reserve 시스템에 replica를 자동으로 늘려줄 수 있도록 HPA를 설정한다. 설정은 CPU 사용량이 15%를 넘어서면 replica를 10개까지 늘려준다.
 ```
@@ -521,51 +521,41 @@ kubectl autoscale deploy reserve --min=1 --max=10 --cpu-percent=15
 ```
 
 - hpa 설정 확인  
-  <img width="631" alt="스크린샷 2021-02-28 오후 2 56 50" src="https://user-images.githubusercontent.com/33116855/109409360-6a19c200-79d5-11eb-90a4-fc5c5030e92b.png">
+  ![image](https://user-images.githubusercontent.com/78134025/110068874-f7845a00-7db9-11eb-84a0-7c9bc9c9cf14.png)
 
 - hpa 상세 설정 확인  
-  <img width="1327" alt="스크린샷 2021-02-28 오후 2 57 37" src="https://user-images.githubusercontent.com/33116855/109409362-6ede7600-79d5-11eb-85ec-85c59bdefcaf.png">
-  <img width="691" alt="스크린샷 2021-02-28 오후 2 57 53" src="https://user-images.githubusercontent.com/33116855/109409364-700fa300-79d5-11eb-8077-70d5cddf7505.png">
-
+  ![image](https://user-images.githubusercontent.com/78134025/110069260-c35d6900-7dba-11eb-887b-91b6d9e1b0c6.png)
+  ![image](https://user-images.githubusercontent.com/78134025/110069157-9446f780-7dba-11eb-8a45-ffd8eeb4fd14.png)
   
 - siege를 활용해서 워크로드를 2분간 걸어준다. (Cloud 내 siege pod에서 부하줄 것)
 ```
 kubectl exec -it (siege POD 이름) -- /bin/bash
-siege -c1000 -t120S -r100 -v --content-type "application/json" 'http://20.194.45.67:8080/reserves POST {"userId":1, "roomId":"3"}'
+siege -c1000 -t120S -r100 -v --content-type "application/json" 'http://52.231.184.252:8080/reserves POST {"userId":1, "parkingLotId":"3"}'
 ```
 
 - 오토스케일이 어떻게 되고 있는지 모니터링을 걸어둔다.
 ```
 watch kubectl get all
 ```
-- 스케일 아웃이 자동으로 되었음을 확인
-
-  <img width="656" alt="스크린샷 2021-02-28 오후 3 01 47" src="https://user-images.githubusercontent.com/33116855/109409423-eb715480-79d5-11eb-8b2c-0a0417df9718.png">
+- 스케일 아웃이 자동으로 되었음을 확인  
+  ![image](https://user-images.githubusercontent.com/78134025/110070367-2fd96780-7dbd-11eb-958e-4ec49fdad251.png)
 
 - 오토스케일링에 따라 Siege 성공률이 높은 것을 확인 할 수 있다.  
+  ![image](https://user-images.githubusercontent.com/78134025/110070415-47b0eb80-7dbd-11eb-88ea-4bdd8ce53aa3.png)
 
-  <img width="412" alt="스크린샷 2021-02-28 오후 3 03 18" src="https://user-images.githubusercontent.com/33116855/109409445-18be0280-79d6-11eb-9c6f-4632f8a88d1d.png">
 
 ## Self-healing (Liveness Probe)
 - reserve 서비스의 yml 파일에 liveness probe 설정을 바꾸어서, liveness probe 가 동작함을 확인
 
-- liveness probe 옵션을 추가하되, 서비스 포트가 아닌 8090으로 설정, readiness probe 미적용
-```
-        livenessProbe:
-            httpGet:
-              path: '/actuator/health'
-              port: 8090
-            initialDelaySeconds: 5
-            timeoutSeconds: 2
-            periodSeconds: 5
-            failureThreshold: 5
-```
+- liveness probe 옵션을 추가하되, 서비스 포트가 아닌 8090으로 설정, readiness probe 미적용  
+  ![image](https://user-images.githubusercontent.com/78134025/110070680-d58cd680-7dbd-11eb-8a7c-dfa0bafd3238.png)
 
 - reserve 서비스에 liveness가 적용된 것을 확인  
-  <img width="824" alt="스크린샷 2021-02-28 오후 3 31 53" src="https://user-images.githubusercontent.com/33116855/109409951-1bbaf200-79da-11eb-9a39-a585224c3ca0.png">
+  ![image](https://user-images.githubusercontent.com/78134025/110070931-66fc4880-7dbe-11eb-8ff7-ba5139687825.png)
 
 - reserve 서비스에 liveness가 발동되었고, 8090 포트에 응답이 없기에 Restart가 발생함   
-  <img width="643" alt="스크린샷 2021-02-28 오후 3 34 35" src="https://user-images.githubusercontent.com/33116855/109409994-7c4a2f00-79da-11eb-8ab7-e542e50fd929.png">
+  ![image](https://user-images.githubusercontent.com/78134025/110071012-9743e700-7dbe-11eb-85c6-bcbf993f9467.png)
+
 
 ## ConfigMap 적용
 - reserve의 application.yaml에 ConfigMap 적용 대상 항목을 추가한다.
