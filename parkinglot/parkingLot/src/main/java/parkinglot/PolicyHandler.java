@@ -21,7 +21,8 @@ public class PolicyHandler{
     }
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverCanceled_UpdateReserve(@Payload Canceled canceled){
+    // public void wheneverCanceled_UpdateReserve(@Payload Canceled canceled){
+    public void wheneverCanceled_(@Payload Canceled canceled){
 
         if(canceled.isMe()){
             System.out.println("##### listener  : " + canceled.toJson());
@@ -35,7 +36,8 @@ public class PolicyHandler{
     }
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverReserved_UpdateReserve(@Payload Reserved reserved){
+    // public void wheneverReserved_UpdateReserve(@Payload Reserved reserved){
+    public void wheneverReserved_(@Payload Reserved reserved){
 
         if(reserved.isMe()){
             System.out.println("##### listener  : " + reserved.toJson());
@@ -49,7 +51,8 @@ public class PolicyHandler{
     }
     
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverUserChecked_UpdateReserve(@Payload UserChecked userChecked){
+    // public void wheneverUserChecked_UpdateReserve(@Payload UserChecked userChecked){
+    public void wheneverUserChecked_(@Payload UserChecked userChecked){
 
         if(userChecked.isMe()){
             System.out.println("##### listener  : " + userChecked.toJson());
@@ -63,7 +66,8 @@ public class PolicyHandler{
     }
 
     @StreamListener(KafkaProcessor.INPUT)
-    public void wheneverEnded_UpdateReserve(@Payload Ended ended){
+    // public void wheneverEnded_UpdateReserve(@Payload Ended ended){
+    public void wheneverEnded_(@Payload Ended ended){
 
         if(ended.isMe()){
             System.out.println("##### listener  : " + ended.toJson());
