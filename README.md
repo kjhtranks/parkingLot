@@ -558,27 +558,23 @@ watch kubectl get all
 
 
 ## ConfigMap 적용
-- reserve의 application.yaml에 ConfigMap 적용 대상 항목을 추가한다.
+- parking 서비스의 application.yaml에 ConfigMap 적용 대상 항목을 추가한다.  
+  ![image](https://user-images.githubusercontent.com/78134025/110072200-c0fe0d80-7dc0-11eb-8c6a-af14d53c6906.png)
 
-  <img width="558" alt="스크린샷 2021-02-28 오후 4 01 52" src="https://user-images.githubusercontent.com/33116855/109410475-4f981680-79de-11eb-8231-0679b6f5f55b.png">
-
-- reserve의 service.yaml에 ConfigMap 적용 대상 항목을 추가한다.
-
-  <img width="325" alt="스크린샷 2021-02-28 오후 4 05 07" src="https://user-images.githubusercontent.com/33116855/109410532-c03f3300-79de-11eb-8e61-71752818c41d.png">
-
+- reserve의 service.yaml에 ConfigMap 적용 대상 항목을 추가한다.  
+  ![image](https://user-images.githubusercontent.com/78134025/110072863-c90a7d00-7dc1-11eb-88fc-11e624152234.png)
 
 - ConfigMap 생성하기
 ```
-kubectl create configmap apiurl --from-literal=conferenceapiurl=http://conference:8080 --from-literal=roomapiurl=http://room:8080
+kubectl create configmap apiurl --from-literal=reserveapiurl=http://reserve:8080 --from-literal=parkinglotapiurl=http://parkinglot:8080
 ```
 
 - Configmap 생성 확인, url이 Configmap에 설정된 것처럼 잘 반영된 것을 확인할 수 있다.  
 ```
 kubectl get configmap apiurl -o yaml
 ```
-  <img width="447" alt="스크린샷 2021-02-28 오후 4 08 16" src="https://user-images.githubusercontent.com/33116855/109410590-33e14000-79df-11eb-93ed-bdfb04778cd8.png">
-  <img width="625" alt="스크린샷 2021-02-28 오후 4 10 11" src="https://user-images.githubusercontent.com/33116855/109410630-8884bb00-79df-11eb-99d4-f6311cbe37bd.png">
-
+  ![image](https://user-images.githubusercontent.com/78134025/110073351-98771300-7dc2-11eb-8f81-36793f2a14b0.png)
+ 
 
 ## 동기식 호출 / 서킷 브레이킹 / 장애격리
 
@@ -588,7 +584,7 @@ kubectl get configmap apiurl -o yaml
 
 - Hystrix 를 설정:  요청처리 쓰레드에서 처리시간이 610 밀리가 넘어서기 시작하여 어느정도 유지되면 CB 회로가 닫히도록 설정
 
-- conference의 Application.yaml 설정
+- parking의 Application.yaml 설정
 ```
 feign:
   hystrix:
@@ -601,21 +597,17 @@ hystrix:
 
 ```
 
-- reserve에 Thread 지연 코드 삽입
-  <img width="702" alt="스크린샷 2021-03-01 오후 2 40 46" src="https://user-images.githubusercontent.com/33116855/109456415-22aa3900-7a9c-11eb-9a30-4e63323312c2.png">
+- reserve에 Thread 지연 코드 삽입  
+  ![image](https://user-images.githubusercontent.com/78134025/110074320-5cdd4880-7dc4-11eb-84b9-ba1f008ccb6b.png)
 
 * 부하테스터 siege 툴을 통한 서킷 브레이커 동작 확인:
 - 동시사용자 100명
 - 60초 동안 실시
 
 ```
-siege -c100 -t60S -r10 -v --content-type "application/json" 'http://52.141.56.203:8080/conferences POST {"roomId": "1", "userId":"1", reserveId:"1"}'
+siege -c100 -t60S -r10 -v --content-type "application/json" 'http://52.231.184.252:8080/parkings POST {"parkingLotId": "1", "userId":"1", reserveId:"1"}'
 ```
 - 부하 발생하여 CB가 발동하여 요청 실패처리하였고, 밀린 부하가 reserve에서 처리되면서 다시 conference를 받기 시작 
-
-  <img width="409" alt="스크린샷 2021-03-01 오후 2 32 14" src="https://user-images.githubusercontent.com/33116855/109455911-00fc8200-7a9b-11eb-8d95-f5df5ef249fd.png">
+  ![image](https://user-images.githubusercontent.com/78134025/110074462-957d2200-7dc4-11eb-8209-2a705cb852ec.png)
 
 - CB 잘 적용됨을 확인
-
-
-
